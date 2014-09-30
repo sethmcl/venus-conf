@@ -1,5 +1,6 @@
 var Conf = v.lib('Conf');
 var Argv = v.lib('providers', 'Argv');
+var Env  = v.lib('providers', 'Env');
 
 describe('Conf', function () {
   var instance;
@@ -27,6 +28,50 @@ describe('Conf', function () {
       }, 10);
 
       v.assert.equal(instance.stores[0] instanceof Argv, true);
+    });
+  });
+
+  describe('replace store', function () {
+    beforeEach(function () {
+      instance.addStore({
+        provider: 'env'
+      });
+
+      instance.addStore({
+        provider: 'env'
+      });
+    });
+
+    it('should replace the provider in the correct location', function () {
+      instance.replaceStore({
+        provider: 'argv'
+      }, -1);
+
+      v.assert.equal(instance.stores[1] instanceof Argv, true);
+    });
+
+    it('should replace the provider in the correct location', function () {
+      instance.replaceStore({
+        provider: 'argv'
+      }, 0);
+
+      v.assert.equal(instance.stores[0] instanceof Argv, true);
+    });
+
+    it('should not replace the provider when an invalid position is given', function () {
+      instance.replaceStore({
+        provider: 'argv'
+      }, 'abc');
+
+      v.assert.equal(instance.stores[1] instanceof Env, true);
+    });
+
+    it('should not replace the provider when an invalid position is given', function () {
+      instance.replaceStore({
+        provider: 'argv'
+      }, 99);
+
+      v.assert.equal(instance.stores[1] instanceof Env, true);
     });
   });
 
